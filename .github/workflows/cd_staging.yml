@@ -8,13 +8,10 @@ jobs:
   runs-on: ubuntu-latest
   name: Deploying everything to staging cluster  
   steps: 
-    - run: |
-        echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/ssh_key
-        mkdir -p  /home/runner/.ssh
-        ls /home/runner/.ssh
-        touch /home/runner/.ssh/known_hosts
-        echo "${{secrets.KNOWN_HOSTS}}" > /home/runner/.ssh/known_hosts
-        chmod 700 /home/runner/ssh_key
-        chmod 700 /home/runner/.ssh
-        ssh -i ~/ssh_key root@157.245.107.213 -t "cd TurboRepo-Devops/ && git pull origin main && pnpm install && pnpm run build && pm2 restart fe-server && pm2 restart http-server && pm2 restart ws-server"
-    
+    - name: SSH into server
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa  # More restrictive permissions
+        ssh-keyscan -H 157.245.107.213 >> ~/.ssh/known_hosts
+        ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@157.245.107.213 "commands..." "cd TurboRepo-Devops/ && git pull origin main && pnpm install && pnpm run build && pm2 restart fe-server && pm2 restart http-server && pm2 restart ws-server"
