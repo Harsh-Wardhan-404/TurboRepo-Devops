@@ -10,6 +10,7 @@ jobs:
   steps: 
     - run: |
         echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/ssh_key
+        echo "${{secrets.KNOWN_HOSTS}}" > ~/.ssh/known_hosts
         ssh -i ~/ssh_key root@157.245.107.213
         cd TurboRepo-Devops && git pull
         pnpm install
