@@ -6,11 +6,12 @@ on:
 
 jobs: 
  redeploy_everything:
+  runs-on: ubuntu-latest
   name: Deploying everything to staging cluster  
 
   steps: 
-    - name: SSH Into server
-    - run: |
+    name: SSH Into server
+    run: |
         echo ${{secrets.SSH_PRIVATE_KEY}} > ~/ssh_key
         ssh -i ~/ssh_key root@157.245.107.213
         cd TurboRepo-Devops && git pull
