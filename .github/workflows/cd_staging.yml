@@ -49,7 +49,7 @@ jobs:
             npm install -g pnpm
             pnpm install
             pnpm run build
-            pm2 restart fe-server
-            pm2 restart http-server
-            pm2 restart ws-server
+            pm2 start fe-server
+            pm2 start http-server
+            pm2 start ws-server
       
