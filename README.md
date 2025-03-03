@@ -1,4 +1,3 @@
-49:20
 
 # Turborepo starter
 
