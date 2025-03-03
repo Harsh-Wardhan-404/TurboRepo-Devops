@@ -1,17 +1,44 @@
-name: Deploy to staging
-on: 
-  push:
-    branches: [main]
+# name: Deploy to staging
+# on: 
+#   push:
+#     branches: [main]
 
-jobs: 
- redeploy_everything:
-  runs-on: ubuntu-latest
-  name: Deploying everything to staging cluster  
-  steps: 
-    - name: SSH into server
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa  # More restrictive permissions
-        ssh-keyscan -H 157.245.107.213 >> ~/.ssh/known_hosts
-        ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@157.245.107.213 "commands..." "cd TurboRepo-Devops/ && git pull origin main && pnpm install && pnpm run build && pm2 restart fe-server && pm2 restart http-server && pm2 restart ws-server"
+# jobs: 
+#  redeploy_everything:
+#   runs-on: ubuntu-latest
+#   name: Deploying everything to staging cluster  
+#   steps: 
+#     - name: SSH into server
+#       run: |
+#         mkdir -p ~/.ssh
+#         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+#         chmod 600 ~/.ssh/id_rsa  # More restrictive permissions
+#         ssh-keyscan -H 157.245.107.213 >> ~/.ssh/known_hosts
+#         ssh -v -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@157.245.107.213 "commands..." "cd TurboRepo-Devops/ && git pull origin main && pnpm install && pnpm run build && pm2 restart fe-server && pm2 restart http-server && pm2 restart ws-server"
+
+
+name: Deploying to instance
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Push to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: 157.245.107.213
+          username: ubuntu
+          password: ${{ secrets.PRIVATE_SSH_KEY }}
+          port: 22
+          script: whoami
+      
