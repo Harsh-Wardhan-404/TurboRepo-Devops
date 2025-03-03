@@ -41,5 +41,6 @@ jobs:
           key: ${{ secrets.PRIVATE_SSH_KEY }}
           debug: true
           port: 22
-          script: whoami
+          script: |
+            cd TurboRepo-Devops/ && git pull origin main && pnpm install && pnpm run build && pm2 restart fe-server && pm2 restart http-server && pm2 restart ws-server
       
